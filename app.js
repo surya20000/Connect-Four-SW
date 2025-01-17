@@ -90,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         square4.classList.contains("player-one")
       ) {
         result.innerHTML = "Player One Wins!";
+        return true;
       }
       if (
         square1.classList.contains("player-two") &&
@@ -97,15 +98,33 @@ document.addEventListener("DOMContentLoaded", () => {
         square3.classList.contains("player-two") &&
         square4.classList.contains("player-two")
       ) {
-        result.innerHTML = "Player Two Wins!";
+        result.innerHTML = "AI Wins!";
+        return true;
       }
     }
+    return false;
+  }
+
+  function makeAIMove() {
+    for (let i = 0; i < squares.length; i++) {
+      if (
+        squares[i + 7]?.classList.contains("taken") &&
+        !squares[i].classList.contains("taken")
+      ) {
+        squares[i].classList.add("taken");
+        squares[i].classList.add("player-two");
+        currentPlayer = 1;
+        displayCurrentPlayer.innerHTML = currentPlayer;
+        break;
+      }
+    }
+    checkBoard();
   }
 
   for (let i = 0; i < squares.length; i++) {
     squares[i].onclick = () => {
       if (
-        squares[i + 7]?.classList.contains("taken") && 
+        squares[i + 7]?.classList.contains("taken") &&
         !squares[i].classList.contains("taken")
       ) {
         if (currentPlayer == 1) {
@@ -113,14 +132,11 @@ document.addEventListener("DOMContentLoaded", () => {
           squares[i].classList.add("player-one");
           currentPlayer = 2;
           displayCurrentPlayer.innerHTML = currentPlayer;
-        } else if (currentPlayer == 2) {
-          squares[i].classList.add("taken");
-          squares[i].classList.add("player-two");
-          currentPlayer = 1;
-          displayCurrentPlayer.innerHTML = currentPlayer;
+          if (!checkBoard()) {
+            setTimeout(makeAIMove, 500);
+          }
         }
-      } else alert("cant go here");
-      checkBoard();
+      } else alert("Can't go here!");
     };
   }
 });
